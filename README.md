@@ -102,9 +102,11 @@ Then you can GET http://localhost:9000/v1/rest/fibonacci/:id
    `id=[integer]`
 
 * **Header Params**
+
   None. 
   
   If you specify following parameter, then the content will be ***gzip*** through transportation layer. 
+
   `Accept-Encoding = true`
 
 * **Success Response:**
