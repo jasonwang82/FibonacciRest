@@ -61,7 +61,17 @@ So, that gives me a idea that the calculation could be sperated into smaller job
 * Each request comes from the load balance mechnisum and go through ***Spring container***. 
 * The restful services will check the number first and then once the validation is passed, then it will trigger a JVM (or docker). See [code](https://github.com/iamtangram/FibonacciRest/blob/master/src/main/java/com/emc/test/rest/FibonacciCalculationResource.java).
 * According to the max threadhold defined in the [properties](https://github.com/iamtangram/FibonacciRest/blob/master/src/main/resources/application.properties), JVM will start the counts of calculation jobs. The result of each jobs will be persisted to temp files. After all jobs are done, spring container will collect these in order and then output as ***compressed*** stream. The temp files will be ***deleted*** async.  See [Job Thread](https://github.com/iamtangram/FibonacciRest/blob/master/src/main/java/com/emc/test/fibonacci/FibonacciPartThread.java) and [Process](https://github.com/iamtangram/FibonacciRest/blob/master/src/main/java/com/emc/test/process/ProcessRunner.java). JVM will have a max maxheapsize (512m) for each run. So it prevent more JVM causing spring main process down.
-* Properties is defined in [HERE](https://github.com/iamtangram/FibonacciRest/blob/master/src/main/resources/application.properties)
+* Properties is defined in [HERE](https://github.com/iamtangram/FibonacciRest/blob/master/src/main/resources/application.properties). You can easily adjust JVM max heap size, task timeout (currently define 10 min), and report heart-beating.
+```
+# JVM parameters
+jvm.parameters.maxheapsize=-Xmx512m
+
+# default timeout (10 * 60 * 1000) in millisecond for executing a specific task
+task.execution.timeout.default=900000
+
+# the interval in millisecond for reporting the progress of the task
+task.execution.progress.report.interval=10000
+```
 * When the request has a big and time-consuming task, then it will ***enqueue*** worker to worker queue and the status is ***BUSY*** meaning it is running. Suppose while the working is running and another big task comes in, then enqueue worker into queue. The queue could know if it is suitable to extend to run in another machine. If yes, then queue will record this machine id and automatically starts another container to run JVM. If no, so mark its status as ***ENQUEUE*** meaning it is waiting for previous big task done. When the first task is done, then status is marked as ***COMPLETE***.If the task has problem and not finish, then the status is marked as ***ABORTED***. It is in second version I would post. The diagram above is what I am thinking to do.
 
 ### How to Run
