@@ -81,6 +81,38 @@ You need install maven 3 before running:
 ```sh
 $ mvn spring-boot:run
 ```
+Then you can GET http://localhost:9000/v1/rest/fibonacci/:id
 
-Then you can GET http://localhost:9000/v1/rest/fibonacci/{id}
+### Restful service Document 
+----
+  Returns string to represent the fibonacci result.
 
+* **URL**
+
+  http://localhost:9000/v1/rest/fibonacci/:id
+
+* **Method:**
+
+  `GET`
+  
+*  **URL Params**
+
+   **Required:**
+ 
+   `id=[integer]`
+
+* **Header Params**
+  None. 
+  
+  If you specify following parameter, then the content will be ***gzip*** through transportation layer. 
+  `Accept-Encoding = true`
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `0 1 1 2 3 5 ...`
+ 
+* **Error Paramaters:**
+
+  * **Code:** 400 <br />
+    **Content:** `Invalid number - :id`
