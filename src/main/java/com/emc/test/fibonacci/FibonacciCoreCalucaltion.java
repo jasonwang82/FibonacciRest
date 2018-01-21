@@ -1,3 +1,6 @@
+/**
+ * @author Jason.Wang
+ */
 package com.emc.test.fibonacci;
 
 import java.io.FileOutputStream;
